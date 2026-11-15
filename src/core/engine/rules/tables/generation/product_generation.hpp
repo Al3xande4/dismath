@@ -5,7 +5,6 @@
 #include "core/api/errors.hpp"
 #include "core/engine/algebra/word_adder.hpp"
 #include "core/engine/rules/tables/generation/generation_strategy.hpp"
-#include "core/engine/rules/transition/transition_manager.hpp"
 #include "core/entities/result.hpp"
 #include "core/entities/symbol.hpp"
 #include "core/entities/word.hpp"

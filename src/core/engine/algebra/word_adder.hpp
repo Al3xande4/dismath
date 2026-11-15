@@ -12,11 +12,10 @@ class WordAdder
 private:
     const CayleyTable &m_addition_table;
     Symbol m_zero;
-    size_t m_word_size;
 
 public:
-    WordAdder(const CayleyTable &addition_table, Symbol zero, size_t word_size)
-        : m_addition_table(addition_table), m_zero(std::move(zero)), m_word_size(word_size)
+    WordAdder(const CayleyTable &addition_table, Symbol zero)
+        : m_addition_table(addition_table), m_zero(std::move(zero))
     {
     }
 
@@ -24,6 +23,5 @@ public:
     OperationResult add(const Word &, const Word &) const;
     OperationResult add(const OperationResult &, const OperationResult &) const;
 
-private:
-    OperationResult _add_digit(const Word &base, const Symbol &digit, size_t idx) const;
+    OperationResult add_digit(const Word &base, const Symbol &digit, size_t idx) const;
 };

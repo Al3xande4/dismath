@@ -20,3 +20,8 @@ class TransitionError : public std::invalid_argument
 public:
     TransitionError(const std::string &msg) : std::invalid_argument(msg) {}
 };
+class DivisionByZero : public std::invalid_argument
+{
+public:
+    DivisionByZero(const std::string &msg) : std::invalid_argument(msg) {}
+};

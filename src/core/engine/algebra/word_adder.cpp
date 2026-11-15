@@ -5,17 +5,18 @@
 #include "core/api/errors.hpp"
 #include "core/entities/result.hpp"
 
-OperationResult WordAdder::_add_digit(const Word &base, const Symbol &digit, size_t idx) const
+OperationResult WordAdder::add_digit(const Word &base, const Symbol &digit, size_t idx) const
 {
+    if (idx >= base.size())
+        return {base};
+
     OperationResult result;
 
     for (const auto &res : m_addition_table.get(base[idx], digit))
     {
-        Word next_word = base;
-        next_word[idx] = res[0];
+        Word next_word = base.with_symbol(idx, res[0]);
 
-        Word carry = res.shifted_left(idx, m_zero);
-        carry[idx] = m_zero;
+        Word carry = res.resized(base.size(), m_zero).shifted_left(idx, m_zero).with_symbol(idx, m_zero);
 
         result.merge(add(next_word, carry));
     }
@@ -25,7 +26,7 @@ OperationResult WordAdder::_add_digit(const Word &base, const Symbol &digit, siz
 
 OperationResult WordAdder::add(const Word &word, const Symbol &symbol) const
 {
-    return _add_digit(word, symbol, 0);
+    return add_digit(word, symbol, 0);
 }
 
 OperationResult WordAdder::add(const Word &x, const Word &y) const
@@ -43,7 +44,7 @@ OperationResult WordAdder::add(const Word &x, const Word &y) const
     {
         OperationResult next;
         for (const auto &word : result)
-            next.merge(_add_digit(word, y[i], i));
+            next.merge(add_digit(word, y[i], i));
 
         result = std::move(next);
         if (result.empty())

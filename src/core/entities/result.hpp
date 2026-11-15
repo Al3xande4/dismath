@@ -17,3 +17,13 @@ struct SymbolOperationResultItem
 using SymbolOperationResult = std::set<SymbolOperationResultItem>;
 
 using OperationResult = std::set<Word>;
+
+struct DivisionResult
+{
+    Word quotient;
+    Word remainder;
+
+    auto operator<=>(const DivisionResult &) const = default;
+};
+
+using DivModResult = std::set<DivisionResult>;
