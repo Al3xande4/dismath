@@ -19,6 +19,8 @@ public:
 
     Alphabet(std::set<Symbol> alphabet) : m_alphabet(std::move(alphabet)) {}
 
+    size_t size() const { return m_alphabet.size(); }
+
     bool contains(const Symbol &symbol) const { return m_alphabet.contains(symbol); }
 
     auto begin() { return m_alphabet.begin(); }

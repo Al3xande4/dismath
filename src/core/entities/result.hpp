@@ -5,10 +5,15 @@
 #include "symbol.hpp"
 #include "word.hpp"
 
-struct OperationResultItem
+struct SymbolOperationResultItem
 {
     Symbol value;
     Word carry;
+
+    bool operator==(const SymbolOperationResultItem &) const = default;
+    auto operator<=>(const SymbolOperationResultItem &) const = default;
 };
 
-using OperationResult = std::set<OperationResultItem>;
+using SymbolOperationResult = std::set<SymbolOperationResultItem>;
+
+using OperationResult = std::set<Word>;
