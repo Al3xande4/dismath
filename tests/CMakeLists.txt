@@ -17,6 +17,10 @@ add_executable(unit_tests
     core/rules/test_generator.cpp
     core/rules/test_transition.cpp
     core/algebra/test_word_adder.cpp
+    core/algebra/test_substract.cpp
+    core/algebra/test_multiply.cpp
+    core/algebra/test_divide.cpp
+    core/algebra/test_divmod.cpp
 )
 
 target_include_directories(unit_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
