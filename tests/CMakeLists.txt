@@ -13,7 +13,9 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 
 add_executable(unit_tests
-    test_smoke.cpp
+    core/entities/test_entities.cpp
+    core/rules/test_generator.cpp
+    core/rules/test_transition.cpp
 )
 
 target_include_directories(unit_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
