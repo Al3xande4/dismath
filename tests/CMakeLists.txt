@@ -16,6 +16,7 @@ add_executable(unit_tests
     core/entities/test_entities.cpp
     core/rules/test_generator.cpp
     core/rules/test_transition.cpp
+    core/algebra/test_word_adder.cpp
 )
 
 target_include_directories(unit_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

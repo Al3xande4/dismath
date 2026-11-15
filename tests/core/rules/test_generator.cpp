@@ -136,7 +136,7 @@ TEST(TableGeneratorProductTest, CyclicGroupZ4MultiplicationAndExternal)
     AdditionGeneration add_strategy(tm, word_size);
     CayleyTable add_table = generator.generate(add_strategy);
 
-    WordAdder adder(add_table, a, word_size);
+    WordAdder adder(add_table, a);
     ProductGeneration prod_strategy(adder, a, b, word_size);
     CayleyTable prod_table = generator.generate(prod_strategy);
 
@@ -227,7 +227,7 @@ TEST(TableGeneratorEdgeCasesTest, ShortcutGraphProducesSevenAndNineVariants)
         Word({b, c, a}),
         Word({c, c, a})
     };
-    EXPECT_EQ(table.get(c, b).size(), 7u);
+    EXPECT_EQ(table.get(c, b).size(), 7U);
     EXPECT_EQ(table.get(c, b), expected_cb);
     EXPECT_EQ(table.get(b, c), expected_cb);
 
@@ -242,7 +242,7 @@ TEST(TableGeneratorEdgeCasesTest, ShortcutGraphProducesSevenAndNineVariants)
         Word({a, a, b}),
         Word({a, a, c})
     };
-    EXPECT_EQ(table.get(c, c).size(), 9u);
+    EXPECT_EQ(table.get(c, c).size(), 9U);
     EXPECT_EQ(table.get(c, c), expected_cc);
 }
 
