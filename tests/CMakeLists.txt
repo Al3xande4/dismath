@@ -13,20 +13,23 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 
 add_executable(unit_tests
-    core/entities/test_entities.cpp
-    core/rules/test_generator.cpp
-    core/rules/test_transition.cpp
-    core/algebra/test_word_adder.cpp
-    core/algebra/test_substract.cpp
-    core/algebra/test_multiply.cpp
-    core/algebra/test_divide.cpp
-    core/algebra/test_divmod.cpp
+    alg/entities/test_entities.cpp
+    alg/tables/test_generator.cpp
+    alg/transition/test_transition.cpp
+    alg/algebra/test_word_adder.cpp
+    alg/algebra/test_substract.cpp
+    alg/algebra/test_multiply.cpp
+    alg/algebra/test_divide.cpp
+    alg/algebra/test_divmod.cpp
 )
 
-target_include_directories(unit_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(unit_tests PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    "${PROJECT_SOURCE_DIR}/src/alg"
+)
 
 target_link_libraries(unit_tests PRIVATE
-    core
+    alg::alg
     GTest::gtest_main
 )
 
