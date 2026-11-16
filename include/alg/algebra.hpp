@@ -1,7 +1,9 @@
 #pragma once
 
 #include <cstddef>
+#include <initializer_list>
 #include <memory>
+#include <variant>
 
 #include "alg/alphabet.hpp"
 #include "alg/result.hpp"
@@ -25,28 +27,26 @@ public:
     Algebra(Algebra &&) noexcept;
     Algebra &operator=(Algebra &&) noexcept;
 
-    Word make_word(const Symbol &);
+    Word make_word(std::initializer_list<Symbol> symbols) const;
+    Word parse_word(std::string_view text) const;
+    Word zero_word() const;
+    Word one_word() const;
 
-    OperationResult add(const Word &x, const Word &y) const;
-    OperationResult add(const OperationResult &x, const OperationResult &y) const;
+    using Operand = std::variant<Word, OperationResult>;
 
-    OperationResult multiply(const Word &x, const Word &y) const;
-    OperationResult multiply(const OperationResult &x, const OperationResult &y) const;
+    OperationResult add(const Operand &, const Operand &) const;
 
-    OperationResult subtract(const Word &x, const Word &y) const;
-    OperationResult subtract(const OperationResult &x, const OperationResult &y) const;
+    OperationResult multiply(const Operand &, const Operand &) const;
 
-    DivModResult divmod(const Word &x, const Word &y) const;
-    DivModResult divmod(const OperationResult &x, const OperationResult &y) const;
+    OperationResult subtract(const Operand &, const Operand &) const;
 
-    OperationResult div(const Word &x, const Word &y) const;
-    OperationResult div(const OperationResult &x, const OperationResult &y) const;
+    DivModResult divmod(const Operand &, const Operand &) const;
 
-    OperationResult mod(const Word &x, const Word &y) const;
-    OperationResult mod(const OperationResult &x, const OperationResult &y) const;
+    OperationResult div(const Operand &, const Operand &) const;
 
-    OperationResult divide(const Word &x, const Word &y) const;
-    OperationResult divide(const OperationResult &x, const OperationResult &y) const;
+    OperationResult mod(const Operand &, const Operand &) const;
+
+    OperationResult divide(const Operand &, const Operand &) const;
 };
 
 } // namespace alg

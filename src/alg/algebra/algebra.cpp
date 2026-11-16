@@ -3,7 +3,9 @@
 // #include <alg/graph_validator.hpp>
 
 #include <functional>
+#include <initializer_list>
 #include <numeric>
+#include <variant>
 #include <vector>
 
 #include "alg/alphabet.hpp"
@@ -40,6 +42,14 @@ struct Algebra::Impl
           adder(addition_table, zero),
           product_table(TableGenerator(tm, alphabet).generate(ProductGeneration(adder, zero, one, size)))
     {
+    }
+
+    OperationResult as_set(const Operand &operand)
+    {
+        if (std::holds_alternative<Word>(operand))
+            return {std::get<Word>(operand)};
+
+        return std::get<OperationResult>(operand);
     }
 
     void validate_same_size(const Word &x, const Word &y) const
@@ -192,7 +202,7 @@ struct Algebra::Impl
     {
         OperationResult quotionts;
         for (const auto &[q, r] : divmod(x, y))
-            quotionts.emplace(r);
+            quotionts.emplace(q);
         return quotionts;
     }
 };
@@ -208,79 +218,84 @@ Algebra::~Algebra() = default;
 Algebra::Algebra(Algebra &&) noexcept = default;
 Algebra &Algebra::operator=(Algebra &&) noexcept = default;
 
-OperationResult Algebra::add(const Word &x, const Word &y) const
+Word Algebra::zero_word() const
 {
-    return m_impl->adder.add(x, y);
-}
-OperationResult Algebra::add(const OperationResult &x, const OperationResult &y) const
-{
-    return m_impl->adder.add(x, y);
+    return Word(m_impl->word_size, m_impl->zero);
 }
 
-OperationResult Algebra::multiply(const Word &x, const Word &y) const
+Word Algebra::one_word() const
 {
-    return m_impl->multiply(x, y);
-}
-OperationResult Algebra::multiply(const OperationResult &x, const OperationResult &y) const
-{
-    return m_impl->apply_pairwise(x, y, &Impl::multiply);
+    return Word(m_impl->word_size, m_impl->zero, {m_impl->one});
 }
 
-OperationResult Algebra::subtract(const Word &x, const Word &y) const
+Word Algebra::make_word(std::initializer_list<Symbol> symbols) const
 {
-    return m_impl->subtract(x, y);
-}
-OperationResult Algebra::subtract(const OperationResult &x, const OperationResult &y) const
-{
-    return m_impl->apply_pairwise(x, y, &Impl::subtract);
+    if (symbols.size() > m_impl->word_size)
+        throw SizesMismatch("Word exceeds algebra word size");
+
+    for (const auto &s : symbols)
+        if (!m_impl->alphabet.contains(s))
+            throw InvalidSymbol("Symbol does not belong to alphabet");
+
+    return Word(m_impl->word_size, m_impl->zero, symbols);
 }
 
-OperationResult Algebra::divide(const Word &x, const Word &y) const
+Word Algebra::parse_word(std::string_view text) const
 {
-    return m_impl->divide(x, y);
-}
-OperationResult Algebra::divide(const OperationResult &x, const OperationResult &y) const
-{
-    return m_impl->apply_pairwise(x, y, &Impl::divide);
+    if (text.size() > m_impl->word_size)
+        throw SizesMismatch("Word exceeds algebra word size");
+
+    Word word(m_impl->word_size, m_impl->zero);
+
+    for (size_t i = 0; i < text.size(); i++)
+    {
+        Symbol s(text[i]);
+        if (!m_impl->alphabet.contains(s))
+            throw InvalidSymbol("Symbol does not belong to alphabet");
+
+        word[i] = s;
+    }
+
+    return word;
 }
 
-DivModResult Algebra::divmod(const Word &x, const Word &y) const
+OperationResult Algebra::add(const Operand &x, const Operand &y) const
 {
-    return m_impl->divmod(x, y);
+    return m_impl->adder.add(m_impl->as_set(x), m_impl->as_set(y));
 }
-DivModResult Algebra::divmod(const OperationResult &x, const OperationResult &y) const
+
+OperationResult Algebra::multiply(const Operand &x, const Operand &y) const
+{
+    return m_impl->apply_pairwise(m_impl->as_set(x), m_impl->as_set(y), &Impl::multiply);
+}
+
+OperationResult Algebra::subtract(const Operand &x, const Operand &y) const
+{
+    return m_impl->apply_pairwise(m_impl->as_set(x), m_impl->as_set(y), &Impl::subtract);
+}
+
+OperationResult Algebra::divide(const Operand &x, const Operand &y) const
+{
+    return m_impl->apply_pairwise(m_impl->as_set(x), m_impl->as_set(y), &Impl::divide);
+}
+
+DivModResult Algebra::divmod(const Operand &x, const Operand &y) const
 {
     DivModResult result;
-    for (const auto &word_x : x)
-        for (const auto &word_y : y)
+    for (const auto &word_x : m_impl->as_set(x))
+        for (const auto &word_y : m_impl->as_set(y))
             result.merge(m_impl->divmod(word_x, word_y));
     return result;
 }
 
-OperationResult Algebra::div(const Word &x, const Word &y) const
+OperationResult Algebra::div(const Operand &x, const Operand &y) const
 {
-    OperationResult quotients;
-    for (const auto &[q, r] : divmod(x, y))
-        quotients.emplace(q);
-    return quotients;
+    return m_impl->apply_pairwise(m_impl->as_set(x), m_impl->as_set(y), &Impl::div);
 }
 
-OperationResult Algebra::div(const OperationResult &x, const OperationResult &y) const
+OperationResult Algebra::mod(const Operand &x, const Operand &y) const
 {
-    return m_impl->apply_pairwise(x, y, &Impl::div);
-}
-
-OperationResult Algebra::mod(const Word &x, const Word &y) const
-{
-    OperationResult remainders;
-    for (const auto &[q, r] : divmod(x, y))
-        remainders.emplace(r);
-    return remainders;
-}
-
-OperationResult Algebra::mod(const OperationResult &x, const OperationResult &y) const
-{
-    return m_impl->apply_pairwise(x, y, &Impl::mod);
+    return m_impl->apply_pairwise(m_impl->as_set(x), m_impl->as_set(y), &Impl::mod);
 }
 
 } // namespace alg

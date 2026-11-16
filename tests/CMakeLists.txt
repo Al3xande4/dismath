@@ -21,6 +21,7 @@ add_executable(unit_tests
     alg/algebra/test_multiply.cpp
     alg/algebra/test_divide.cpp
     alg/algebra/test_divmod.cpp
+    alg/test_algebra_api.cpp
 )
 
 target_include_directories(unit_tests PRIVATE

@@ -35,4 +35,9 @@ public:
     using AlgebraError::AlgebraError;
 };
 
+class InvalidSymbol : public AlgebraError
+{
+    using AlgebraError::AlgebraError;
+};
+
 } // namespace alg
