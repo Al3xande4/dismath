@@ -33,6 +33,7 @@ public:
     auto operator<=>(const Term &) const = default;
 
     size_t size() const { return m_symbols.size(); }
+    bool empty() const { return m_symbols.empty(); }
 
     bool contains(const Symbol &symbol) const { return m_symbols.contains(symbol); }
 

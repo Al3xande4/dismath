@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <stdexcept>
 
 #include "alg/result.hpp"
 #include "algebra/word_adder.hpp"
@@ -44,7 +45,7 @@ public:
         if (y == m_one)
             return {Word(m_word_size, m_zero, {x})};
 
-        throw AxiomError("ProductGeneration.axiom_value: neither x nor y fall into axiom cases");
+        throw std::invalid_argument("ProductGeneration.axiom_value: neither x nor y fall into axiom cases");
     }
 
     OperationResult advance(const OperationResult &prev, const Symbol &fixed) const override

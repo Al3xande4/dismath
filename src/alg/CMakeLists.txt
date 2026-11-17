@@ -1,8 +1,7 @@
 add_library(alg STATIC
     entities/word.cpp
-    # transition/graph_validator.cpp
+    transition/graph_validator.cpp
     transition/transition_manager.cpp
-    # tables/cayley_table.cpp
     tables/table_generator.cpp
     algebra/word_adder.cpp
     algebra/algebra.cpp

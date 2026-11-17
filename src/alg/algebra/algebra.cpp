@@ -1,6 +1,6 @@
 #include <alg/algebra.hpp>
 #include <alg/errors.hpp>
-// #include <alg/graph_validator.hpp>
+#include <alg/graph_validator.hpp>
 
 #include <functional>
 #include <initializer_list>
@@ -209,7 +209,10 @@ struct Algebra::Impl
 
 Algebra::Algebra(TransitionGraph graph, Alphabet alphabet, Symbol zero, size_t word_size)
 {
-    // GraphValidator::validate(graph, alphabet, zero, word_size);
+    if (word_size == 0)
+        throw WordSizeError("Word size must be greater than zero");
+
+    GraphValidator::validate(graph, alphabet, zero);
     TransitionManager tm(std::move(graph), zero);
     m_impl = std::make_unique<Impl>(tm, std::move(alphabet), word_size);
 }
@@ -235,7 +238,7 @@ Word Algebra::make_word(std::initializer_list<Symbol> symbols) const
 
     for (const auto &s : symbols)
         if (!m_impl->alphabet.contains(s))
-            throw InvalidSymbol("Symbol does not belong to alphabet");
+            throw InvalidSymbol("Symbol does not belong to alphabet", s);
 
     return Word(m_impl->word_size, m_impl->zero, symbols);
 }

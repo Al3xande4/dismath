@@ -25,6 +25,8 @@ public:
 
     size_t size() const { return m_alphabet.size(); }
 
+    bool empty() const { return m_alphabet.empty(); }
+
     bool contains(const Symbol &symbol) const { return m_alphabet.contains(symbol); }
 
     bool operator==(const Alphabet &) const = default;

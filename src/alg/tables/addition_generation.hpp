@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <stdexcept>
 
 #include "alg/result.hpp"
 #include "generation_strategy.hpp"
@@ -37,7 +38,7 @@ public:
         if (y == m_zero)
             return {Word(m_word_size, m_zero, {x})};
 
-        throw AxiomError("AdditionGeneration.axiom_value: neither x nor y fall into axiom cases");
+        throw std::invalid_argument("AdditionGeneration.axiom_value: neither x nor y fall into axiom cases");
     }
 
     OperationResult advance(const OperationResult &prev, const Symbol &) const override
